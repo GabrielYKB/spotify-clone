@@ -11,6 +11,7 @@ export default function Player() {
     const [isPaused, setIsPaused] = useState(false);
     const [position, setPosition] = useState(null);
     const [playerOverlayIsOpen, setPlayerOverlayIsOpen] = useState(false);
+    const [isActive, setIsActive] = useState(false);
 
     useEffect(() => {
         const token = sessionStorage.getItem("spotify-key");
@@ -21,7 +22,7 @@ export default function Player() {
 
         window.onSpotifyWebPlaybackSDKReady = () => {
             const player = new window.Spotify.Player({
-                name: "Spotify Playback",
+                name: "Gabriel Spotify clone",
                 getOAuthToken: (cb) => {
                     cb(token);
                 },
@@ -44,22 +45,19 @@ export default function Player() {
                 setTrack(state.track_window.current_track);
                 setIsPaused(state.paused);
                 setPosition(state.position);
-            });
 
+                player.getCurrentState().then((state) => {
+                    if (!state) {
+                        setIsActive(false);
+                    } else {
+                        setIsActive(true);
+                    }
+                });
+            });
+            setLocalPlayer(player);
             player.connect();
         };
     }, []);
-
-    useEffect(() => {
-        async function getPlayback() {
-            if (device) {
-                await spotifyApi.transferMyPlayback([device], true);
-            }
-            await spotifyApi.getMyDevices();
-        }
-
-        getPlayback();
-    }, [device]);
 
     useEffect(() => {
         if (!localPlayer) return;
@@ -71,7 +69,8 @@ export default function Player() {
         };
     }, [localPlayer]);
 
-    if (!localPlayer || !track) return <div>no player, please connect.</div>;
+    if (!isActive || !localPlayer || !track)
+        return <div>No player is connected, please try again</div>;
 
     return (
         <div>
@@ -109,6 +108,9 @@ export default function Player() {
             <PlayerOverlay
                 setPlayerOverlayIsOpen={setPlayerOverlayIsOpen}
                 playerOverlayIsOpen={playerOverlayIsOpen}
+                player={localPlayer}
+                isPaused={isPaused}
+                position={position}
                 track={track}
             />
         </div>
