@@ -1,6 +1,7 @@
+import { useEffect, useState } from "react";
 import { Play, Pause, SkipBack, SkipForward } from "react-feather";
-import { useState, useEffect } from "react";
 import { formatTime } from "@/utils/formatTime";
+import { spotifyApi } from "@/pages/_app";
 
 export default function PlayerControls({ player, isPaused, position, track }) {
     const [currentProgress, setCurrentProgress] = useState(position);
@@ -9,7 +10,7 @@ export default function PlayerControls({ player, isPaused, position, track }) {
     useEffect(() => {
         const interval = setInterval(() => {
             if (!isPaused && player) {
-                setCurrentProgress(parseFloat(currentProgress) + 1000);
+                setCurrentProgress((c) => parseFloat(c) + 1000);
             }
         }, 1000);
 
@@ -26,7 +27,7 @@ export default function PlayerControls({ player, isPaused, position, track }) {
                 <SkipBack
                     className="h-5 w-5 fill-white"
                     onClick={() => {
-                        player.previousTrack();
+                        spotifyApi.skipToPrevious();
                     }}
                 />
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-text">
@@ -34,32 +35,31 @@ export default function PlayerControls({ player, isPaused, position, track }) {
                         <Play
                             className="ml-1 h-5 w-5 fill-black text-black"
                             onClick={() => {
-                                player.togglePlay();
+                                spotifyApi.play();
                             }}
                         />
                     ) : (
                         <Pause
                             className="h-5 w-5 fill-black text-black"
                             onClick={() => {
-                                player.togglePlay();
+                                spotifyApi.pause();
                             }}
                         />
                     )}
                 </div>
-
                 <SkipForward
                     className="h-5 w-5 fill-white"
                     onClick={() => {
-                        player.nextTrack();
+                        spotifyApi.skipToNext();
                     }}
                 />
             </div>
             <div className="mt-4 flex items-center justify-center gap-2 text-sm text-text-dimmed">
-                <p className="">{formatTime(currentProgress)}</p>
+                <p>{formatTime(currentProgress)}</p>
                 <div className="group relative w-80">
                     <label
                         htmlFor=""
-                        className="relative block h-1  rounded-sm bg-text-dimmed/30"
+                        className="relative block h-1 rounded-sm bg-text-dimmed/30"
                     >
                         <div className="h-full overflow-hidden rounded-sm">
                             <div
@@ -88,7 +88,7 @@ export default function PlayerControls({ player, isPaused, position, track }) {
                         value={currentProgress}
                         onChange={(e) => setCurrentProgress(e.target.value)}
                         onMouseUp={() => {
-                            player.seek(currentProgress);
+                            spotifyApi.seek(currentProgress);
                         }}
                         className="absolute inset-0 opacity-0"
                     />
