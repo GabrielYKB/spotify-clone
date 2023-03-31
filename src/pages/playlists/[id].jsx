@@ -4,12 +4,13 @@ import { useRouter } from "next/router";
 import { spotifyApi } from "../_app";
 import { formatTime } from "@/utils/formatTime";
 import { Clock, Play } from "react-feather";
+import Link from "next/link";
 
 export default function Playlist() {
     const router = useRouter();
     const {
         data: playlist,
-        // isLoading,
+        isLoading,
         isError,
     } = useQuery({
         queryKey: ["playlists", router.query.id],
@@ -17,11 +18,17 @@ export default function Playlist() {
             (await spotifyApi.getPlaylist(router.query.id)).body,
     });
 
-    const isLoading = true;
-
-    console.log(playlist);
-
-    if (isError) return <Layout>error...</Layout>;
+    if (isError)
+        return (
+            <Layout>
+                <h2 className="py-16 px-4 text-center text-3xl font-bold md:text-5xl">
+                    Oops, could not get that playlist
+                </h2>
+                <Link href="/" className="rounded-full bg-primary py-4 px-6 ">
+                    Go back
+                </Link>
+            </Layout>
+        );
 
     return (
         <Layout>
@@ -38,7 +45,7 @@ export default function Playlist() {
                 <div>
                     <p className="font-semibold text-text-dimmed">Playlist</p>
                     {isLoading ? (
-                        <div className="animate-pulse rounded-lg bg-neutral-600 text-4xl font-black text-transparent md:text-6xl">
+                        <div className="animate-pulse bg-neutral-600 text-4xl font-black text-transparent md:text-6xl">
                             playlist name
                         </div>
                     ) : (
@@ -79,6 +86,8 @@ export default function Playlist() {
                                               <div className="h-4 w-2/6 bg-neutral-600"></div>
                                           </div>
                                       </div>
+                                      <div className="h-4 w-2/6 bg-neutral-600 max-md:hidden"></div>
+                                      <div className="h-4 w-10 bg-neutral-600"></div>
                                   </div>
                               ))
                         : playlist.tracks.items.map((item, index) => (
@@ -102,7 +111,7 @@ export default function Playlist() {
                                   </div>
                                   <div className="flex items-center gap-4 overflow-hidden">
                                       <img
-                                          src={item.track.album.images[0].url}
+                                          src={item.track.album.images[0]?.url}
                                           alt=""
                                           className=" h-12 w-12"
                                       />
