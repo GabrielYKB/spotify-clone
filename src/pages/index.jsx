@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { spotifyApi } from "./_app";
 
-export default function index() {
+export default function Home() {
     const {
         data: playlists,
         isLoading,
