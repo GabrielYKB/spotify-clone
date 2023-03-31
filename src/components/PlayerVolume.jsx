@@ -1,23 +1,41 @@
+import { spotifyApi } from "@/pages/_app";
 import React, { useState } from "react";
 import { Volume1, Volume2, VolumeX } from "react-feather";
-import { spotifyApi } from "@/pages/_app";
 
 export default function PlayerVolume({ player }) {
     const [volume, setVolume] = useState(0.5);
-
     return (
         <div className="flex items-center gap-2">
             {volume > 0.5 ? (
-                <Volume2 />
+                <Volume2
+                    className=" opacity-80 hover:opacity-100"
+                    onClick={() => {
+                        spotifyApi.setVolume(0);
+                        setVolume(0);
+                    }}
+                />
             ) : volume > 0 ? (
-                <Volume1 />
+                <Volume1
+                    className=" opacity-80 hover:opacity-100"
+                    onClick={() => {
+                        spotifyApi.setVolume(0);
+                        setVolume(0);
+                    }}
+                />
             ) : (
-                <VolumeX />
+                <VolumeX
+                    className="fill-white opacity-80 hover:opacity-100"
+                    onClick={() => {
+                        spotifyApi.setVolume(40);
+                        setVolume(0.4);
+                    }}
+                />
             )}
-            <div className="group relative w-36">
+
+            <div className="group relative w-32">
                 <label
                     htmlFor=""
-                    className="relative block h-1  rounded-sm bg-text-dimmed/30"
+                    className="relative block h-1 rounded-sm bg-text-dimmed/30"
                 >
                     <div className="h-full overflow-hidden rounded-sm">
                         <div
