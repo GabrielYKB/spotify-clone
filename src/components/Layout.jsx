@@ -1,5 +1,4 @@
 import React from "react";
-import Player from "./Player";
 import Sidebar from "./Sidebar";
 
 export default function Layout({ children }) {
